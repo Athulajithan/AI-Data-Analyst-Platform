@@ -1,0 +1,49 @@
+# Python / Byte-compiled
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyo
+
+# Virtual Environments
+.venv/
+venv/
+env/
+ENV/
+
+# Environment Variables
+.env
+.env.local
+.env.*.local
+
+# Output & Generated Files
+output_report/
+test_output/
+/exports/
+*.db
+*.sqlite
+*.sqlite3
+
+# Chroma Vector DB (auto-generated, in-memory only)
+chroma_db/
+.chromadb/
+
+# IDE & Editor
+.idea/
+.vscode/
+*.code-workspace
+
+# Antigravity AI
+.gemini/
+
+# Streamlit
+.streamlit/secrets.toml
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Distribution / packaging
+dist/
+build/
+*.egg-info/

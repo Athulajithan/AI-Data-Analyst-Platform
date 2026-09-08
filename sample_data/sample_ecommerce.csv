@@ -1,0 +1,27 @@
+transaction_id,customer_id,transaction_date,customer_age,customer_gender,product_category,product_name,units_sold,unit_price,total_spend,payment_method,region,discount_percent,is_returned
+TX1001,CUST-001,2025-01-01,28,Female,Electronics,Wireless Headphones,1,150.0,150.0,Credit Card,North,0.0,No
+TX1002,CUST-002,2025-01-01,45,Male,Home & Kitchen,Coffee Maker,2,80.0,160.0,PayPal,West,10.0,No
+TX1003,CUST-003,2025-01-02,34,F,Clothing,Denim Jacket,1,120.0,120.0,Credit Card,East,5.0,No
+TX1004,CUST-004,2025-01-02,,M,Electronics,Smartphone,1,800.0,800.0,Debit Card,South,0.0,No
+TX1005,CUST-005,2025-01-03,52,Female,Beauty,Skin Serum,3,45.0,135.0,Credit Card,North,15.0,Yes
+TX1006,CUST-006,2025-01-03,23,Male,Electronics,Gaming Mouse,1,60.0,60.0,PayPal,West,0.0,No
+TX1007,CUST-007,2025-01-04,61,Female,Home & Kitchen,Air Fryer,1,180.0,180.0,Credit Card,East,20.0,No
+TX1008,CUST-008,2025-01-04,29,Male,Clothing,Running Shoes,2,95.0,190.0,Credit Card,North,10.0,No
+TX1009,CUST-009,2025-01-05,41,Female,Electronics,Smartwatch,1,250.0,250.0,Debit Card,South,5.0,No
+TX1010,CUST-010,2025-01-05,38,Male,Beauty,Perfume,1,110.0,110.0,PayPal,West,0.0,No
+TX1011,CUST-011,2025-01-06,31,Female,Electronics,Bluetooth Speaker,2,70.0,140.0,Credit Card,North,0.0,No
+TX1012,CUST-012,2025-01-06,50,M,Home & Kitchen,Blender,1,90.0,90.0,Credit Card,East,10.0,No
+TX1013,CUST-013,2025-01-07,26,Female,Clothing,Summer Dress,1,75.0,75.0,PayPal,South,0.0,Yes
+TX1014,CUST-014,2025-01-07,48,Male,Electronics,4K Monitor,1,450.0,450.0,Credit Card,West,15.0,No
+TX1015,CUST-015,2025-01-08,33,Female,Beauty,Face Cream,2,35.0,70.0,Debit Card,North,0.0,No
+TX1016,CUST-016,2025-01-08,59,Male,Home & Kitchen,Microwave,1,220.0,220.0,Credit Card,East,5.0,No
+TX1017,CUST-017,2025-01-09,22,Female,Electronics,Mechanical Keyboard,1,130.0,130.0,PayPal,South,0.0,No
+TX1018,CUST-018,2025-01-09,42,Male,Clothing,Winter Coat,1,210.0,210.0,Credit Card,West,20.0,No
+TX1019,CUST-019,2025-01-10,36,Female,Beauty,Shampoo Pack,3,20.0,60.0,Debit Card,North,0.0,No
+TX1020,CUST-020,2025-01-10,27,Male,Electronics,Tablet,1,350.0,350.0,Credit Card,East,10.0,No
+TX1008,CUST-008,2025-01-04,29,Male,Clothing,Running Shoes,2,95.0,190.0,Credit Card,North,10.0,No
+TX1021,CUST-021,2025-01-11,72,Female,Home & Kitchen,Luxury Oven,1,2500.0,2500.0,Credit Card,North,0.0,No
+TX1022,CUST-022,2025-01-11,19,F,Clothing,Graphic Tee,2,25.0,50.0,PayPal,West,0.0,No
+TX1023,CUST-023,2025-01-12,47,Male,Beauty,Hair Dryer,1,85.0,85.0,Credit Card,South,5.0,No
+TX1024,CUST-024,2025-01-12,30,Female,Electronics,Noise-Canceling Earbuds,1,199.0,199.0,Debit Card,East,0.0,No
+TX1025,CUST-025,2025-01-13,55,Male,Home & Kitchen,Vacuum Cleaner,1,300.0,300.0,Credit Card,North,15.0,Yes

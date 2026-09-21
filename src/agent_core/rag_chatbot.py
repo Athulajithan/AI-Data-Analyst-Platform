@@ -21,6 +21,8 @@ import json
 import hashlib
 from typing import Any, Dict, List, Optional, Tuple
 
+from src.agent_core.web_search import format_search_summary, search_web
+
 # ─────────────────────────────────────────────────────────────────────────────
 # SECTION 1 ─ DOCUMENT BUILDER
 # Converts all analysis artifacts → LangChain Document objects
@@ -471,6 +473,17 @@ Provide a clear, data-backed answer. If referencing specific numbers, quote them
         context = self._retrieve_context(user_query)
         sources = []
 
+        external_wants = any(term in user_query.lower() for term in [
+            "benchmark", "industry", "market trend", "market", "competitor",
+            "external", "benchmarking", "industry standard", "best practice",
+            "research", "sector", "web", "public data"
+        ])
+        external_context = ""
+        if external_wants:
+            results = search_web(user_query, max_results=3, timeout=12)
+            if results:
+                external_context = format_search_summary(user_query, results, max_items=3)
+
         # Method 1: LangChain ConversationalRetrievalChain (best quality)
         if self._chain is not None:
             try:
@@ -482,22 +495,32 @@ Provide a clear, data-backed answer. If referencing specific numbers, quote them
                     for d in source_docs
                 ]))
                 if answer:
+                    if external_context:
+                        answer = f"{answer}\n\n---\n\n**External benchmark scan:**\n{external_context}"
                     self.chat_history.append((user_query, answer))
-                    return answer, sources
+                    return answer, sources + (["external_research"] if external_context else [])
             except Exception as e:
                 print(f"[RAG] Chain invoke failed: {e}. Falling back to direct Gemini.")
 
         # Method 2: Direct Gemini API call with context
         if self.gemini_api_key and context:
             answer = self._gemini_direct_answer(user_query, context)
+            if external_context:
+                answer = f"{answer}\n\n---\n\n**External benchmark scan:**\n{external_context}"
             self.chat_history.append((user_query, answer))
             sources = ["full_report", "insights", "kpis"]
+            if external_context:
+                sources.append("external_research")
             return answer, sources
 
         # Method 3: Deterministic keyword fallback
-        answer = self._deterministic_answer(user_query, context)
+        base_answer = self._deterministic_answer(user_query, context)
+        if external_context:
+            answer = f"{base_answer}\n\n---\n\n**External benchmark scan:**\n{external_context}"
+        else:
+            answer = base_answer
         self.chat_history.append((user_query, answer))
-        return answer, ["dataset_analysis"]
+        return answer, ["dataset_analysis"] + (["external_research"] if external_context else [])
 
     def get_suggested_questions(self, metadata: Dict) -> List[str]:
         """Generate context-aware suggested questions for this specific dataset."""

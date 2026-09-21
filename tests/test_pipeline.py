@@ -20,6 +20,7 @@ from src.agent_core.text_to_sql import TextToSQLAssistant
 from src.agent_core.insight_generator import InsightGenerator
 from src.agent_core.recommendation_engine import RecommendationEngine
 from src.agent_core.report_builder import ReportBuilder
+from src.agent_core.web_search import extract_search_results
 from src.exports.pdf_exporter import PrintablePDFExporter
 
 class TestAIDataAnalystEnterprisePipeline(unittest.TestCase):
@@ -79,6 +80,20 @@ class TestAIDataAnalystEnterprisePipeline(unittest.TestCase):
         os.makedirs("output_report", exist_ok=True)
         res_path = PrintablePDFExporter.generate_printable_report("test_sample", self.metadata, profiling, report_md, out_path)
         self.assertTrue(os.path.exists(res_path))
+
+    def test_06_web_search_result_parsing(self):
+        html = '''
+        <html><body>
+        <a rel="nofollow" class="result-link" href="https://example.com/retail-benchmark">Retail benchmark</a>
+        <div class="result-snippet">Average ecommerce conversion rate is 3.2% for retail brands.</div>
+        <a rel="nofollow" class="result-link" href="https://example.com/market">Market trend</a>
+        <div class="result-snippet">Demand is strongest in digital channels and loyalty programs.</div>
+        </body></html>
+        '''
+        results = extract_search_results(html, max_results=2)
+        self.assertGreaterEqual(len(results), 2)
+        self.assertIn("Retail benchmark", results[0]["title"])
+        self.assertIn("conversion rate", results[0]["snippet"].lower())
 
 if __name__ == "__main__":
     unittest.main()

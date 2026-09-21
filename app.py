@@ -28,9 +28,13 @@ from src.agent_core.recommendation_engine import RecommendationEngine
 from src.agent_core.report_builder import ReportBuilder
 from src.exports.exporter import DataExporter
 from src.agent_core.rag_chatbot import build_rag_chatbot_cached
+from src.agent_core.domain_mapper import DomainMapper
+from src.exports.chat_widget import build_floating_widget_html
+import streamlit.components.v1 as components
+
 
 st.set_page_config(
-    page_title="AI Data Analyst Platform 10.0",
+    page_title="AI Data Analyst Platform 11.0",
     page_icon="📊",
     layout="wide",
     initial_sidebar_state="expanded"
@@ -72,6 +76,12 @@ if "rag_chatbot" not in st.session_state:
     st.session_state["rag_chatbot"] = None
 if "rag_dataset_hash" not in st.session_state:
     st.session_state["rag_dataset_hash"] = None
+
+# Floating widget pending query (from JS postMessage bridge)
+if "widget_pending_query" not in st.session_state:
+    st.session_state["widget_pending_query"] = None
+if "domain_info" not in st.session_state:
+    st.session_state["domain_info"] = None
 
 
 # -------------------------------------------------------------
@@ -122,12 +132,19 @@ df_clean, trans_log = cleaner.run_full_cleaning_pipeline(
     impute_missing_numerical=impute_num_strat
 )
 
-profiling = DataProfiler.profile_dataset(df_raw, metadata)
+# Profile AFTER cleaning so numeric-string conversions are reflected
+profiling = DataProfiler.profile_dataset(df_clean, metadata)
 dq_score = profiling["data_quality_score"]
 validation = DataValidator.validate_cleaning(df_raw, df_clean, trans_log)
 eda_res = EDAEngine.run_eda(df_clean, metadata)
 kpi_res = KPIEngine.calculate_kpis(df_clean, metadata)
 stat_res = StatisticalAnalyzer.run_tests(df_clean, metadata)
+
+# Domain Intelligence (cached per dataset)
+if st.session_state["domain_info"] is None or st.session_state.get("_last_dataset") != dataset_name:
+    st.session_state["domain_info"] = DomainMapper.infer_domain(metadata)
+    st.session_state["_last_dataset"] = dataset_name
+domain_info = st.session_state["domain_info"]
 
 cat_cols = metadata["column_buckets"]["categorical_columns"]
 num_cols = metadata["column_buckets"]["numerical_columns"]
@@ -148,14 +165,21 @@ if cat_cols:
     if selected_cats:
         df_filtered = df_filtered[df_filtered[filter_cat].isin(selected_cats)]
 
+
+
 # Header
 st.markdown(f"""
 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
     <div>
-        <h1 style="margin: 0; font-weight: 800; font-size: 2.2rem; color: #ffffff;">Enterprise AI Data Analyst Platform 10.0</h1>
-        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.9rem;">Dataset: <b style="color: #38bdf8;">{dataset_name}</b> | Filtered Rows: <b style="color: #34d399;">{len(df_filtered):,}</b> of {len(df_clean):,}</p>
+        <h1 style="margin: 0; font-weight: 800; font-size: 2.2rem; color: #ffffff;">Enterprise AI Data Analyst Platform 11.0</h1>
+        <p style="margin: 4px 0 0 0; color: #94a3b8; font-size: 0.9rem;">
+            Dataset: <b style="color: #38bdf8;">{dataset_name}</b> &nbsp;|&nbsp;
+            Filtered Rows: <b style="color: #34d399;">{len(df_filtered):,}</b> of {len(df_clean):,} &nbsp;|&nbsp;
+            Domain: <b style="color: #f472b6;">{domain_info['icon']} {domain_info['domain']}</b>
+            <span style="font-size:0.72rem;color:#64748b;margin-left:4px;">({domain_info['confidence']} confidence)</span>
+        </p>
     </div>
-    <div>
+    <div style="display:flex;gap:10px;align-items:center;">
         <span class="clean-badge">⭐ Quality Score: {dq_score}/100</span>
     </div>
 </div>
@@ -237,6 +261,75 @@ with tab_dash:
 
     st.subheader("📋 Dataset Preview Table")
     st.dataframe(df_filtered.head(10), use_container_width=True)
+
+    # ── Domain Intelligence Panel ────────────────────────────────────────────
+    st.markdown("---")
+    st.subheader(f"{domain_info['icon']} Domain Intelligence — {domain_info['domain']}")
+
+    _d1, _d2 = st.columns([1, 2])
+    with _d1:
+        st.markdown(f"""
+<div class="kpi-card">
+  <div class="kpi-title">Inferred Business Domain</div>
+  <div class="kpi-value" style="font-size:1.4rem;">{domain_info['icon']} {domain_info['domain']}</div>
+  <div class="kpi-subtitle">Confidence: {domain_info['confidence']} &nbsp;·&nbsp; Signals: {', '.join(domain_info['domain_signals_matched'][:5]) or 'General'}</div>
+</div>
+""", unsafe_allow_html=True)
+        if domain_info.get("use_cases"):
+            st.markdown("**Business Use Cases:**")
+            for uc in domain_info["use_cases"][:4]:
+                st.markdown(f"  ✅ {uc}")
+
+    with _d2:
+        st.markdown("**🎯 Recommended ML Goals & Analytical Objectives:**")
+        _goal_cols = st.columns(min(2, len(domain_info["ml_goals"])))
+        for _gi, _goal in enumerate(domain_info["ml_goals"][:4]):
+            _pri_colors = {"HIGH": "#f59e0b", "CRITICAL": "#ef4444", "MEDIUM": "#38bdf8", "LOW": "#64748b"}
+            _pri_col = _pri_colors.get(_goal.get("priority", "MEDIUM"), "#64748b")
+            _goal_cols[_gi % 2].markdown(f"""
+<div class="kpi-card" style="margin-bottom:10px;">
+  <div style="display:flex;justify-content:space-between;margin-bottom:4px;">
+    <span style="font-size:0.72rem;font-weight:700;color:{_pri_col};">● {_goal.get('priority','MEDIUM')}</span>
+    <span style="font-size:0.68rem;color:#64748b;">{_goal.get('model_type','')}</span>
+  </div>
+  <div style="font-weight:700;color:#f8fafc;font-size:0.85rem;margin-bottom:4px;">{_goal.get('title','')}</div>
+  <div style="color:#94a3b8;font-size:0.72rem;margin-bottom:6px;">{_goal.get('description','')}</div>
+  <div style="color:#22c55e;font-size:0.68rem;">💡 {_goal.get('business_value','')}</div>
+</div>
+""", unsafe_allow_html=True)
+
+    with st.expander("📊 Recommended Analyses for this Domain", expanded=False):
+        for _ra in domain_info.get("recommended_analyses", []):
+            st.markdown(f"  📌 {_ra}")
+
+    # ── Data Quality & Outlier Report ────────────────────────────────────────
+    st.markdown("---")
+    with st.expander("🔬 Data Quality Audit & Outlier Detection Report", expanded=False):
+        _audit_col1, _audit_col2 = st.columns(2)
+        with _audit_col1:
+            st.markdown("**Cleaning Transformations Applied:**")
+            if trans_log:
+                for _t in trans_log:
+                    _icon = "✅" if _t["records_affected"] > 0 else "⬜"
+                    st.markdown(f"{_icon} **Step {_t['step']}:** {_t['issue']} — *{_t['records_affected']} records affected*")
+                    if _t.get("details"):
+                        st.caption(f"Details: {_t['details'][:200]}")
+            else:
+                st.success("✅ No cleaning actions required — dataset is already clean.")
+        with _audit_col2:
+            st.markdown("**Column Type Resolution:**")
+            _type_data = []
+            for col, info in metadata.get("column_analysis", {}).items():
+                _type_data.append({
+                    "Column": col,
+                    "Type": info.get("inferred_type", "?"),
+                    "Missing %": f"{info.get('missing_pct', 0)}%",
+                    "Unique": info.get("unique_count", 0),
+                })
+            import pandas as _pd2
+            st.dataframe(_pd2.DataFrame(_type_data), use_container_width=True, height=200)
+
+
 
 # -------------------------------------------------------------
 # TAB 2: CUSTOM CHART STUDIO
@@ -659,4 +752,92 @@ Your Question
 **Privacy:** Your data never leaves your machine unless you add a Gemini API key. 
 All embedding and retrieval happens in-memory.
 """)
+
+
+# =============================================================================
+# FLOATING RAG CHAT WIDGET — Persistent across ALL tabs
+# =============================================================================
+# This runs OUTSIDE all tab contexts so the bubble appears on every tab.
+# The widget communicates via st.session_state + component value.
+
+import hashlib as _hl
+
+_widget_gemini_key = os.environ.get("GEMINI_API_KEY", os.environ.get("GOOGLE_API_KEY", ""))
+_widget_hash = _hl.md5(
+    f"{dataset_name}_{len(df_clean)}_{_widget_gemini_key[:8] if _widget_gemini_key else 'nk'}".encode()
+).hexdigest()
+
+# Build/cache the chatbot for the floating widget (reuses same cache key as Tab 7)
+if st.session_state["rag_dataset_hash"] != _widget_hash or st.session_state["rag_chatbot"] is None:
+    with st.spinner("🤖 Initializing AI Chatbot Knowledge Base…"):
+        _w_insights = InsightGenerator.generate_insights(
+            metadata, profiling, validation, eda_res, stat_res, kpi_res, None
+        )
+        _w_recs = RecommendationEngine.generate_recommendations(
+            profiling, validation, eda_res, stat_res, kpi_res
+        )
+        _w_recs_all = _w_recs + st.session_state.get("custom_recommendations", [])
+        _w_report_md = ReportBuilder.build_markdown_report(
+            dataset_name=dataset_name,
+            metadata=metadata,
+            profiling=profiling,
+            validation=validation,
+            transformation_log=trans_log,
+            eda_results=eda_res,
+            stat_results=stat_res,
+            kpi_results=kpi_res,
+            chart_recs=[],
+            insights=_w_insights,
+            recommendations=_w_recs_all
+        )
+        st.session_state["rag_chatbot"] = build_rag_chatbot_cached(
+            dataset_name=dataset_name,
+            metadata=metadata,
+            profiling=profiling,
+            validation=validation,
+            eda_res=eda_res,
+            stat_res=stat_res,
+            kpi_res=kpi_res,
+            insights=_w_insights,
+            recommendations=_w_recs_all,
+            report_md=_w_report_md,
+            df_sample_csv=df_clean.head(20).to_csv(index=False),
+            gemini_api_key=_widget_gemini_key if _widget_gemini_key else None,
+        )
+        st.session_state["rag_dataset_hash"] = _widget_hash
+
+_widget_chatbot = st.session_state["rag_chatbot"]
+
+# Handle any pending widget query (submitted by previous render)
+if st.session_state.get("widget_pending_query"):
+    _pq = st.session_state["widget_pending_query"]
+    st.session_state["widget_pending_query"] = None
+    _w_ans, _w_srcs = _widget_chatbot.chat(_pq)
+    st.session_state["rag_messages"].append({"role": "user", "content": _pq})
+    st.session_state["rag_messages"].append({
+        "role": "assistant",
+        "content": _w_ans,
+        "sources": _w_srcs
+    })
+
+# Render the floating widget HTML component
+_suggested_qs = _widget_chatbot.get_suggested_questions(metadata)
+_widget_html = build_floating_widget_html(
+    messages=st.session_state["rag_messages"],
+    suggested_questions=_suggested_qs,
+    dataset_name=dataset_name,
+    is_ai_active=bool(_widget_gemini_key),
+    height=680,
+)
+
+# Inject widget via component; capture any postMessage value
+_widget_value = components.html(_widget_html, height=680, scrolling=False)
+
+# If user typed a query in the widget (postMessage value received by Streamlit)
+if _widget_value and isinstance(_widget_value, dict) and _widget_value.get("action") == "chat":
+    _incoming_query = _widget_value.get("query", "").strip()
+    if _incoming_query:
+        st.session_state["widget_pending_query"] = _incoming_query
+        st.rerun()
+
 

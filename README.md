@@ -1,213 +1,417 @@
 # 📊 Enterprise AI Data Analyst Platform 10.0
 
-> **Fully automated end-to-end data analysis platform** powered by AI — from raw data ingestion to executive-level insights, dashboards, strategic recommendations, ML forecasting, and a RAG-powered AI chatbot.
+### From Raw Data to Actionable Business Intelligence — Powered by AI
 
-[![Python](https://img.shields.io/badge/Python-3.12%2B-blue)](https://python.org)
-[![Streamlit](https://img.shields.io/badge/Streamlit-1.30%2B-red)](https://streamlit.io)
-[![LangChain](https://img.shields.io/badge/LangChain-RAG-green)](https://langchain.com)
-[![Gemini](https://img.shields.io/badge/Google-Gemini%202.5-orange)](https://ai.google.dev)
+🔗 **[🚀 Try the Live Application](https://ai-insight-flow.streamlit.app/)**
 
----
+An end-to-end AI-powered data analytics platform that I built to simplify the entire data analysis workflow — from uploading raw datasets and cleaning data to generating business insights, interactive dashboards, ML forecasts, and conversational AI assistance.
 
-## 🌟 Features
+As someone pursuing a career in **Data Analytics, Data Science, and Generative AI**, I wanted to build a project that goes beyond traditional data analysis notebooks. This platform brings multiple stages of the analytics lifecycle into a single, interactive application.
 
-| Category | Capability |
-|---|---|
-| **Data Ingestion** | CSV, Excel (XLSX/XLS), Parquet, JSON with PII detection & type inference |
-| **Data Profiling** | Data Quality Score (0–100), missing values, duplicates, column statistics |
-| **Data Cleaning** | Non-destructive pipeline: dedup, whitespace trim, null standardization, median/mean imputation |
-| **Data Validation** | Pre/post cleaning audit grid with transformation log |
-| **EDA** | Pearson/Spearman correlations, segmentation, time trends, IQR anomaly detection |
-| **Statistical Analysis** | Welch's t-test, Chi-Square, ANOVA with H0/H1 + p-value reporting |
-| **KPI Engine** | Sales & Revenue, Customer metrics, Operational Quality KPIs |
-| **Visualization** | Plotly auto-recommendation engine (6+ chart types), Custom Chart Studio |
-| **AI Text-to-SQL** | NLP → SQL query generation + read-only SQLite execution |
-| **ML & Forecasting** | AutoML Random Forest, linear trend forecasting with 95% CI, SHAP XAI |
-| **Insights** | 4-level evidence-based AI insights (Descriptive → Prescriptive) |
-| **Recommendations** | Strategic framework: PROBLEM / GOAL / HOW / IMPACT / NEXT STEP |
-| **🤖 RAG Chatbot** | Retrieval-Augmented Generation chatbot grounded in your actual dataset analysis |
-| **Export Center** | Cleaned CSV, Markdown report, Standalone HTML Dashboard, Printable PDF Briefing |
+Instead of switching between different tools for data cleaning, visualization, SQL analysis, forecasting, and reporting, users can perform these tasks through one integrated platform.
+
+> **My goal:** Build a practical AI Data Analyst that helps users explore data, identify meaningful patterns, and turn analytical findings into actionable business decisions.
 
 ---
 
-## 🏗️ Architecture
+## 🌟 Key Features
 
-```
-Raw Data (CSV/Excel/Parquet/JSON)
-         │
-         ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     DATA ENGINE                              │
-│  DataLoader → DataProfiler → DataCleaner → DataValidator    │
-│  → EDAEngine → StatisticalAnalyzer → KPIEngine              │
-│  → VisualizationEngine → ForecastingEngine → MLEngine       │
-└─────────────────────────────────┬───────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     AGENT CORE                               │
-│  InsightGenerator → RecommendationEngine → ReportBuilder    │
-│  TextToSQLAssistant → RAGChatbot (ChromaDB + Gemini)        │
-└─────────────────────────────────┬───────────────────────────┘
-                                  │
-                                  ▼
-┌─────────────────────────────────────────────────────────────┐
-│                     EXPORT CENTER                            │
-│  CSV · Excel · Markdown Report · HTML Dashboard · PDF       │
-└─────────────────────────────────────────────────────────────┘
-```
+| Category                     | Capabilities                                                             |
+| ---------------------------- | ------------------------------------------------------------------------ |
+| 📂 Data Ingestion            | CSV, Excel, Parquet, and JSON support                                    |
+| 🔐 Data Privacy              | PII detection and sensitive column flagging                              |
+| 📊 Data Profiling            | Data quality score, missing values, duplicates, and statistics           |
+| 🧹 Data Cleaning             | Deduplication, whitespace trimming, null standardization, and imputation |
+| ✅ Data Validation            | Before-and-after cleaning audit and transformation logs                  |
+| 📈 Exploratory Data Analysis | Correlations, segmentation, trends, and IQR-based anomaly detection      |
+| 🧪 Statistical Analysis      | Welch's t-test, Chi-Square, and ANOVA                                    |
+| 🎯 KPI Engine                | Sales, revenue, customer, and operational KPIs                           |
+| 📉 Visualization             | Automated chart recommendations and Custom Chart Studio                  |
+| 💬 AI Text-to-SQL            | Natural language to SQL with read-only SQLite execution                  |
+| 🤖 Machine Learning          | Random Forest baseline, trend forecasting, and SHAP-based explainability |
+| 💡 AI Insights               | Four levels of insights from descriptive to prescriptive                 |
+| 🎯 Recommendations           | Structured business recommendations with goals, impact, and next steps   |
+| 🧠 RAG Chatbot               | Dataset-grounded conversational AI with source attribution               |
+| 📤 Export Center             | CSV, Markdown, HTML dashboard, and PDF briefing                          |
 
 ---
 
-## 🤖 RAG Chatbot Architecture
+## 🚀 Live Demo
 
-```
-Your Question
-     │
-     ▼
-Query Embedding (Google text-embedding-004)
-     │
-     ▼
-ChromaDB Vector Search (MMR, Top-5 docs)
-     │ ← Retrieves from: EDA · KPIs · Insights · Recommendations · Full Report
-     ▼
-Gemini 2.5-Flash LLM + Conversation Memory (8 turns)
-     │
-     ▼
-Answer (with source attribution)
+🌐 **[Launch Enterprise AI Data Analyst Platform](https://ai-insight-flow.streamlit.app/)**
 
-Fallback: BM25 Keyword Retriever → Deterministic text search (no API key needed)
-```
+Explore the deployed Streamlit application to see how an integrated analytics workflow can be delivered through an interactive web interface.
+
+> **Note:** For the best experience, use a sample dataset or non-sensitive business data. Features requiring Gemini may depend on API configuration and availability.
 
 ---
 
-## 🚀 Quick Start
+## 🖥️ Application Modules
 
-### 1. Clone the Repository
-```bash
-git clone https://github.com/YOUR_USERNAME/ai-data-analyst-platform.git
-cd ai-data-analyst-platform
+### 1. 🖥️ Executive Dashboard
+
+A centralized dashboard for understanding dataset health and business performance.
+
+* KPI cards for important business metrics.
+* Trend analysis and interactive charts.
+* Correlation heatmaps.
+* Anomaly detection.
+* Data quality overview.
+
+### 2. 🎨 Custom Chart Studio
+
+A flexible visualization workspace for creating customized charts.
+
+* Select X and Y axes.
+* Choose from multiple chart types.
+* Apply filters.
+* Customize chart configurations.
+* Explore relationships between variables.
+
+### 3. 💬 AI Text-to-SQL & Query Lab
+
+Interact with structured data using natural language or SQL.
+
+**Example question:**
+
+> "What was the total revenue generated by each product category?"
+
+The platform can generate SQL queries from natural language and execute read-only queries against the SQLite analytics environment.
+
+It also provides a manual SQL console for users who prefer writing their own queries.
+
+### 4. 🎯 Insights & Recommendations
+
+Transform analytical results into structured business insights.
+
+The platform organizes insights into four levels:
+
+1. **Descriptive** — What happened?
+2. **Diagnostic** — What patterns or factors may explain it?
+3. **Predictive** — What could happen next?
+4. **Prescriptive** — What actions could be considered?
+
+Recommendations follow a structured framework:
+
+* Problem
+* Goal
+* How
+* Expected Impact
+* Next Step
+
+AI-generated insights should be reviewed against the underlying data before being used for business decisions.
+
+### 5. 📉 ML & Forecasting
+
+Explore machine learning and forecasting capabilities within the analytics workflow.
+
+* Random Forest baseline modeling.
+* Linear trend forecasting.
+* Forecast uncertainty intervals.
+* SHAP-based feature attribution.
+* Model evaluation and analytical exploration.
+
+The forecasting results are intended to support analysis and planning, not guarantee future outcomes.
+
+### 6. 📥 Export Center
+
+Export analytical outputs for further use.
+
+* Cleaned CSV data.
+* Markdown reports.
+* Standalone HTML dashboards.
+* Printable PDF executive briefings.
+
+### 7. 🤖 AI Data Chatbot (RAG)
+
+Ask questions about your dataset analysis using a retrieval-augmented generation workflow.
+
+The chatbot is designed to ground responses in generated analytical content, including:
+
+* EDA results.
+* KPI summaries.
+* Insights.
+* Recommendations.
+* Full analytical reports.
+
+It includes vector-based retrieval with ChromaDB and a keyword-based fallback approach.
+
+---
+
+## 🧠 RAG Chatbot Architecture
+
+The chatbot combines retrieval and language generation to provide contextual responses based on the dataset analysis.
+
+```text
+User Question
+      │
+      ▼
+Query Embedding
+(Google text-embedding-004)
+      │
+      ▼
+ChromaDB Vector Search
+(MMR • Top-5 Documents)
+      │
+      ▼
+Retrieve Relevant Analysis
+(EDA • KPIs • Insights • Reports)
+      │
+      ▼
+Gemini 2.5 Flash
++ Conversation Memory
+      │
+      ▼
+Grounded Response
++ Source Attribution
 ```
 
-### 2. Install Dependencies
-```bash
-pip install -r requirements.txt
+### Fallback Retrieval
+
+When the embedding-based retrieval workflow is unavailable, the platform can use a BM25 keyword retrieval approach for deterministic text search without requiring an API key.
+
+The fallback is intended to provide a basic retrieval capability rather than equivalent semantic understanding.
+
+---
+
+## 🏗️ System Architecture
+
+```text
+┌───────────────────────────────────────────┐
+│              DATA INGESTION               │
+│ CSV • Excel • Parquet • JSON              │
+└─────────────────────┬─────────────────────┘
+                      │
+                      ▼
+┌───────────────────────────────────────────┐
+│              DATA ENGINE                  │
+│ DataLoader                                │
+│ DataProfiler                              │
+│ DataCleaner                               │
+│ DataValidator                             │
+│ EDAEngine                                 │
+│ StatisticalAnalyzer                       │
+│ KPIEngine                                 │
+│ VisualizationEngine                       │
+│ ForecastingEngine                        │
+│ MLEngine                                  │
+└─────────────────────┬─────────────────────┘
+                      │
+                      ▼
+┌───────────────────────────────────────────┐
+│               AGENT CORE                  │
+│ InsightGenerator                          │
+│ RecommendationEngine                      │
+│ ReportBuilder                             │
+│ TextToSQLAssistant                        │
+│ RAGChatbot                                │
+└─────────────────────┬─────────────────────┘
+                      │
+                      ▼
+┌───────────────────────────────────────────┐
+│             EXPORT CENTER                 │
+│ CSV • Markdown • HTML • PDF               │
+└───────────────────────────────────────────┘
 ```
 
-### 3. (Optional) Set Gemini API Key
-Get a free key at [Google AI Studio](https://makersuite.google.com/app/apikey), then either:
-```bash
-# Option A: Environment variable
-set GEMINI_API_KEY=your_key_here   # Windows
-export GEMINI_API_KEY=your_key_here  # Linux/Mac
+The architecture separates data processing, AI-assisted analysis, and reporting into distinct components to support maintainability and future expansion.
 
-# Option B: Create .env file
-echo GEMINI_API_KEY=your_key_here > .env
-```
-> The platform works **without a Gemini key** using deterministic AI — add it to unlock full AI-powered insights, natural language chatbot, and Text-to-SQL intelligence.
+---
 
-### 4. Launch the Platform
-```bash
-streamlit run app.py
-```
+## 🛠️ Technology Stack
 
-Open your browser at `http://localhost:8501`
+| Layer                | Technologies                             |
+| -------------------- | ---------------------------------------- |
+| Frontend             | Streamlit, Plotly                        |
+| Data Processing      | Pandas, NumPy                            |
+| Statistical Analysis | SciPy, Statsmodels                       |
+| Machine Learning     | Scikit-learn, XGBoost                    |
+| AI / LLM             | Google Gemini, LangChain                 |
+| RAG                  | ChromaDB, BM25                           |
+| SQL                  | SQLite                                   |
+| Forecasting          | Statistical and machine learning methods |
+| Explainable AI       | SHAP                                     |
+| Reporting            | Markdown, HTML, PDF                      |
 
 ---
 
 ## 📁 Project Structure
 
-```
-├── app.py                          # Main Streamlit web application (7 tabs)
-├── cli.py                          # Headless CLI pipeline
+```text
+ai-data-analyst-platform/
+│
+├── app.py
+├── cli.py
 ├── requirements.txt
+│
 ├── sample_data/
-│   └── sample_ecommerce.csv        # Sample dataset for demo
+│   └── sample_ecommerce.csv
+│
 ├── src/
 │   ├── data_engine/
-│   │   ├── loader.py               # Multi-format ingestion + PII detection
-│   │   ├── profiler.py             # Data Quality Score computation
-│   │   ├── cleaner.py              # Non-destructive cleaning pipeline
-│   │   ├── validator.py            # Pre/post cleaning audit
-│   │   ├── eda.py                  # EDA: correlations, anomalies, trends
-│   │   ├── statistical_analyzer.py # Hypothesis testing suite
-│   │   ├── kpi_engine.py           # Sales / Customer / Ops KPI calculators
-│   │   ├── viz_engine.py           # Plotly auto-recommendation engine
-│   │   ├── ml_engine.py            # AutoML Random Forest baseline
-│   │   ├── forecasting_engine.py   # Time-series + SHAP XAI
-│   │   ├── sql_engine.py           # Read-only SQLite engine
-│   │   ├── db_connectors.py        # Multi-DB connector
-│   │   └── duckdb_accelerator.py   # DuckDB / SQLite acceleration
+│   │   ├── loader.py
+│   │   ├── profiler.py
+│   │   ├── cleaner.py
+│   │   ├── validator.py
+│   │   ├── eda.py
+│   │   ├── statistical_analyzer.py
+│   │   ├── kpi_engine.py
+│   │   ├── viz_engine.py
+│   │   ├── ml_engine.py
+│   │   ├── forecasting_engine.py
+│   │   ├── sql_engine.py
+│   │   ├── db_connectors.py
+│   │   └── duckdb_accelerator.py
+│   │
 │   ├── agent_core/
-│   │   ├── llm_provider.py         # Gemini / OpenAI wrapper
-│   │   ├── insight_generator.py    # 4-level evidence-based insights
-│   │   ├── recommendation_engine.py # Strategic recommendation framework
-│   │   ├── report_builder.py       # 23-section report compiler
-│   │   ├── text_to_sql.py          # NLP → SQL assistant
-│   │   └── rag_chatbot.py          # RAG chatbot (ChromaDB + Gemini)
+│   │   ├── llm_provider.py
+│   │   ├── insight_generator.py
+│   │   ├── recommendation_engine.py
+│   │   ├── report_builder.py
+│   │   ├── text_to_sql.py
+│   │   └── rag_chatbot.py
+│   │
 │   └── exports/
-│       ├── exporter.py             # Export orchestrator
-│       ├── dashboard_builder.py    # Standalone HTML dashboard
-│       └── pdf_exporter.py         # Printable executive PDF briefing
+│       ├── exporter.py
+│       ├── dashboard_builder.py
+│       └── pdf_exporter.py
+│
 └── tests/
-    └── test_pipeline.py            # Enterprise unit tests (5 tests)
+    └── test_pipeline.py
 ```
 
 ---
 
-## 🖥️ Application Tabs
+## 🚀 Getting Started
 
-| Tab | Description |
-|---|---|
-| 🖥️ **Executive Dashboard** | KPI cards, trend charts, correlation heatmap, anomaly maps, data quality |
-| 🎨 **Custom Chart Studio** | Build any chart — choose X/Y axes, chart type, color, filters |
-| 💬 **AI Text-to-SQL & Query Lab** | Ask in plain English → auto-generated SQL + manual SQL console |
-| 🎯 **Insights & Recommendations** | AI-generated + custom strategic recommendation builder |
-| 📉 **ML & Forecasting** | AutoML, trend forecasting with 95% CI, SHAP feature attribution |
-| 📥 **Export Center** | Download cleaned data, full report, HTML dashboard, PDF briefing |
-| 🤖 **AI Data Chatbot (RAG)** | Ask anything about your dataset in natural language |
+### 1. Clone the Repository
+
+```bash
+git clone https://github.com/YOUR_USERNAME/ai-data-analyst-platform.git
+
+cd ai-data-analyst-platform
+```
+
+### 2. Install Dependencies
+
+```bash
+pip install -r requirements.txt
+```
+
+### 3. Configure Gemini API Key (Optional)
+
+Get an API key through [Google AI Studio](https://aistudio.google.com/).
+
+**Windows PowerShell:**
+
+```powershell
+$env:GEMINI_API_KEY="your_key_here"
+```
+
+**Linux / macOS:**
+
+```bash
+export GEMINI_API_KEY="your_key_here"
+```
+
+You can also use a `.env` file if supported by your configuration.
+
+> Without a Gemini API key, supported deterministic and non-LLM workflows can still operate. AI-powered functionality depends on the configured provider and available services.
+
+### 4. Launch the Application
+
+```bash
+streamlit run app.py
+```
+
+Open the local application:
+
+```text
+http://localhost:8501
+```
 
 ---
 
-## 📊 Supported Data Formats
-- **CSV** (any delimiter)
-- **Excel** (`.xlsx`, `.xls`)
-- **Parquet**
-- **JSON** (records or list of objects)
+## 🧪 Testing
 
----
+Run the project test suite:
 
-## 🧪 Running Tests
 ```bash
 python -m pytest tests/ -v
 ```
 
+The repository includes a pipeline test file for validating core functionality. Add more tests as the project evolves to cover data cleaning, SQL safety, statistical analysis, and AI workflows.
+
 ---
 
 ## 🔐 Security & Privacy
-- **No data is sent externally** unless you add a Gemini API key for AI features.
-- All SQL execution is **read-only** with destructive keyword guardrails.
-- PII detection flags sensitive columns for review.
+
+The platform includes several security-focused design considerations:
+
+* **PII Detection:** Flags potentially sensitive columns for review.
+* **Read-Only SQL:** SQL execution is intended to prevent destructive operations through query restrictions.
+* **Non-Destructive Cleaning:** Cleaning operations are designed to preserve the original data and maintain transformation records.
+* **API-Based AI Processing:** When external AI services are enabled, relevant data or analytical content may be sent to those services. Review your provider configuration and avoid uploading sensitive information without appropriate authorization.
+
+> SQL keyword guardrails are not a complete security boundary. Production deployments should implement proper query parsing, permissions, resource limits, and isolation.
 
 ---
 
-## 🛠️ Tech Stack
+## 💡 What I Learned Building This Project
 
-| Layer | Technology |
-|---|---|
-| Frontend | Streamlit 1.30+, Plotly 5.15+ |
-| Data Processing | Pandas, NumPy, SciPy, Statsmodels |
-| Machine Learning | Scikit-learn, XGBoost |
-| AI / LLM | Google Gemini 2.5-Flash, LangChain |
-| RAG | ChromaDB (vector store), BM25 (keyword fallback) |
-| SQL Engine | SQLite (in-memory, read-only) |
+This project helped me explore the intersection of **Data Analytics, Machine Learning, and Generative AI**.
+
+Some of the key areas I worked with include:
+
+* Designing an end-to-end data processing pipeline.
+* Building modular Python components for analytics.
+* Implementing automated data profiling and cleaning.
+* Applying statistical methods to business datasets.
+* Integrating natural language with SQL workflows.
+* Exploring RAG architecture and vector retrieval.
+* Developing interactive dashboards using Streamlit and Plotly.
+* Designing exportable analytical reports.
+* Considering data privacy and read-only query execution.
+
+Building this platform has helped me move beyond individual data science projects and think about how analytical tools can be organized into a complete application.
 
 ---
 
-## 📝 License
+## 🎯 Future Improvements
 
-MIT License — see [LICENSE](LICENSE) for details.
+* [ ] Role-based access control.
+* [ ] More robust SQL parsing and query validation.
+* [ ] Support for larger datasets and asynchronous processing.
+* [ ] Additional database integrations.
+* [ ] Improved automated model selection.
+* [ ] Data lineage and experiment tracking.
+* [ ] Enhanced evaluation of AI-generated insights.
+* [ ] Automated deployment and CI/CD.
+* [ ] Expanded test coverage.
 
 ---
 
-*Built with ❤️ as an enterprise-grade AI Data Analyst automation platform.*
+## 👨‍💻 About Me
+
+Hi, I'm **Athul Ajithan**, a Computer Science graduate interested in Data Analytics, Data Science, Machine Learning, and Generative AI.
+
+I enjoy building practical projects that combine data, software development, and AI to solve real-world problems.
+
+This Enterprise AI Data Analyst Platform is one of my projects focused on bringing the complete data analytics lifecycle into a unified, interactive application.
+
+I'm continuously learning, improving my technical skills, and building projects that demonstrate my ability to work with data and develop useful AI-powered applications.
+
+### Connect With Me
+
+* 🔗 [Portfolio](https://athul-portfolio-six.vercel.app/)
+* 💻 [GitHub](https://github.com/Athulajithan)
+
+---
+
+## 📄 License
+
+This project is licensed under the MIT License. See the `LICENSE` file for details.
+
+---
+
+**Built with Python, Streamlit, and AI — with a focus on practical data analytics.** 🚀
